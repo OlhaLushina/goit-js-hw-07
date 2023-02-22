@@ -10,8 +10,6 @@ galleryEl.insertAdjacentHTML('beforeend', galleryItemsEl);
 // Прослуховуємо подію кліка на елементах галереї
 galleryEl.addEventListener('click', onImageClick);
 
-// Прослуховуємо подію натиснення клавіші Escape
-document.addEventListener('keydown', onDocumentKeydown);
 
 // Створення розмітки галереї
 function createGalleryItemsEl(galleryItems) {
@@ -37,15 +35,28 @@ function onImageClick(e) {
 
     // Створюємо модальне вікно
     modale = basicLightbox.create(`
-        <img src="${e.target.parentNode.href}" width="800" height="600">
-    `);
+            <img src="${e.target.parentNode.href}" width="800" height="600">
+        `, {
+        // Відкриття модального вікна
+        onShow: (instance) => {
+                // Додаємо прослуховування події натиснення клавіш клавіатури
+                document.addEventListener('keydown', onDocumentKeydown);
+        },
+        // Закриття модального вікна
+        onClose: (instance) => {
+                // Видаляємо прослуховування події натиснення клавіш клавіатури
+                document.removeEventListener('keydown', onDocumentKeydown);
+            }
+        }
+    );
 
     // Відкриваємо модальне вікно
     modale.show();
 }
 
-// Обробник натиснення клавіші Escape
+// Обробник натиснення клавіш клавіатури
 function onDocumentKeydown(e) {
+    // Якщо натиснули не Escape
     if (e.code !== 'Escape') {
         return;
     }
